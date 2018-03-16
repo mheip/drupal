@@ -1,0 +1,19 @@
+{
+  "name": "mheip/drupal",
+  "type": "library",
+  "description": "A library for Drupal helper functions",
+  "keywords": ["drupal", "drupal helper functions"],
+  "license": "MIT",
+
+  "autoload": {
+    "psr-4": {
+      "Mheip\\Drupal\\": "src/"
+    }
+  },
+  "require": {
+    "php": "^7.0"
+  },
+  "config": {
+    "sort-packages": true
+  }
+}
