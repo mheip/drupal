@@ -5,7 +5,7 @@
  * Time: 10:28
  */
 
-namespace Mheip\Drupal\EntityHelpers;
+namespace Mheip\Drupal\Helpers\Entities;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\node\NodeInterface;

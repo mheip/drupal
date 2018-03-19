@@ -13,6 +13,7 @@ use Drupal\Core\Cache\Cache;
 use Drupal\Core\Menu\MenuLinkTree;
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Template\Attribute;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -80,39 +81,41 @@ abstract class NavigationBlock extends BlockBase implements ContainerFactoryPlug
     return $this->getMenuItemData($tree);
   }
 
-  protected function getMenuItemData($tree) {
-    foreach ($tree as $branch) {
+  /**
+   * @param array $tree
+   *
+   * @return array
+   */
+  protected function getMenuItemData(array $tree) {
+    $menuItems = [];
 
+    foreach ($tree as $branch) {
       if (!isset($branch->link)) {
         continue;
       }
 
-      $menuLink = [];
       $link = $branch->link;
+      $menuLink = [];
       $menuLink['name'] = $link->getTitle();
       $menuLink['url'] = $link->getUrlObject()->toString();
-      $menuLink['active'] = $branch->inActiveTrail;
 
-      foreach ($branch->subtree as $child) {
+      // Create the attributes
+      $attributes = $link->getPluginDefinition()['options']['attributes'] ?? [];
+      $menuLink['attributes'] = new Attribute($attributes);
 
-        if (!isset($child->link)) {
-          continue;
-        }
+      if ($this->inActiveTrail($link->getPluginId())) {
+        $menuLink['active'] = TRUE;
+        $menuLink['attributes']->addClass('active');
+      }
 
-        $childlink = $child->link;
-        $childlinkId = $childlink->getPluginId();
-
-        if (!isset($childlinkId)) {
-          continue;
-        }
-
-        $menuLink['children'][$childlinkId]['name'] = $childlink->getTitle();
-        $menuLink['children'][$childlinkId]['url'] = $childlink->getUrlObject()->toString();
-        $menuLink['children'][$childlinkId]['active'] = $child->inActiveTrail;
+      if (!empty($branch->subtree)) {
+        $menuLink['children'] = $this->getMenuItemData($branch->subtree);
       }
 
       $menuItems[] = $menuLink;
     }
+
+    return $menuItems;
   }
 
   /**
@@ -170,4 +173,19 @@ abstract class NavigationBlock extends BlockBase implements ContainerFactoryPlug
     return Cache::mergeContexts(['url'], parent::getCacheContexts());
   }
 
+  /**
+   * @param $pluginId
+   *
+   * @return bool
+   */
+  public function inActiveTrail($pluginId) {
+    $activeTrail = \Drupal::service('menu.active_trail');
+    $activeLinks = $activeTrail->getActiveTrailIds($this->menuName);
+
+    if (empty($activeLinks)) {
+      return FALSE;
+    }
+
+    return in_array($pluginId, array_keys($activeLinks));
+  }
 }
