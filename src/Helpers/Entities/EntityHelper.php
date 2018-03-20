@@ -8,6 +8,7 @@
 namespace Mheip\Drupal\Helpers\Entities;
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 
 abstract class EntityHelper {
 
@@ -20,12 +21,16 @@ abstract class EntityHelper {
   }
 
   /**
-   * @param \Drupal\Core\Entity\EntityInterface $entity
+   * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
    * @param $fieldName
    *
    * @return bool
    */
-  public static function getEntityFieldValue(EntityInterface $entity, $fieldName) {
+  public static function getEntityFieldValue(FieldableEntityInterface $entity, $fieldName) {
+    if (!$entity->hasField($fieldName)) {
+      return FALSE;
+    }
+
     if (!$fieldValue = $entity->get($fieldName)) {
       return FALSE;
     }
