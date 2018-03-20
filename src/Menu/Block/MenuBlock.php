@@ -90,6 +90,7 @@ abstract class MenuBlock extends BlockBase implements ContainerFactoryPluginInte
 
       $link = $branch->link;
       $menuLink = [];
+      $menuLink['enabled'] = $link->isEnabled();
       $menuLink['name'] = $link->getTitle();
       $menuLink['url'] = $link->getUrlObject()->toString();
 
