@@ -1,12 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: maartenheip
- * Date: 19/03/18
- * Time: 21:20
- */
 
-namespace Mheip\Drupal\Helpers\Navigation;
+namespace Mheip\Drupal\Menu\Block;
 
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Cache\Cache;
@@ -17,11 +11,11 @@ use Drupal\Core\Template\Attribute;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class NavigationBlock.
+ * Class MenuBlock.
  *
- * @package Mheip\Drupal\Helpers\Navigation
+ * @package Mheip\Drupal\Helpers\Menu
  */
-abstract class NavigationBlock extends BlockBase implements ContainerFactoryPluginInterface {
+abstract class MenuBlock extends BlockBase implements ContainerFactoryPluginInterface {
 
   /**
    * The name of the menu.

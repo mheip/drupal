@@ -5,11 +5,10 @@
  * Time: 10:28
  */
 
-namespace Mheip\Drupal\Helpers\Entities;
+namespace Mheip\Drupal\Entities;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\node\NodeInterface;
-use Drupal\paragraphs\Entity\Paragraph;
 
 class ParagraphHelper extends EntityHelper {
 

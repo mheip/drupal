@@ -5,7 +5,7 @@
  * Time: 10:09
  */
 
-namespace Mheip\Drupal\Helpers\Entities;
+namespace Mheip\Drupal\Entities;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
