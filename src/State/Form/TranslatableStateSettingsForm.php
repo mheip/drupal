@@ -1,12 +1,7 @@
 <?php
 
-namespace Mheip\Drupal\State\Forms;
+namespace Mheip\Drupal\State\Form;
 
-use Drupal\Component\EventDispatcher\ContainerAwareEventDispatcher;
-use Drupal\Core\Cache\Cache;
-use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
-use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageManager;
 use Drupal\Core\State\StateInterface;
@@ -59,6 +54,35 @@ abstract class TranslatableStateSettingsForm extends StateSettingsForm {
     $stateValues = $this->getStateValues();
     $stateValues[$this->langcode] = $values;
     $this->setStateValues($stateValues);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getStateValue(string $key) {
+    $stateValues = $this->getStateValuesInLanguage();
+
+    if (!$stateValues || !isset($stateValues[$key])) {
+      return FALSE;
+    }
+
+    return $stateValues[$key];
+  }
+
+  /**
+   * Returns state values in a certain language.
+   *
+   * @return bool
+   *  The state values in a certain language.
+   */
+  public function getStateValuesInLanguage() {
+    $values = $this->getStateValues();
+
+    if (empty($values[$this->langcode])) {
+      return FALSE;
+    }
+
+    return $values[$this->langcode];
   }
 
 }

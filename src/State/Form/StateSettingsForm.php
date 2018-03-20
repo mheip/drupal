@@ -1,6 +1,6 @@
 <?php
 
-namespace Mheip\Drupal\State\Forms;
+namespace Mheip\Drupal\State\Form;
 
 use Drupal\Component\EventDispatcher\ContainerAwareEventDispatcher;
 use Drupal\Core\Cache\Cache;
@@ -31,15 +31,10 @@ abstract class StateSettingsForm extends FormBase implements ContainerInjectionI
   /**
    * Constructs a \Drupal\ds\Form\EmergencyForm object.
    *
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
-   *   The module handler.
    * @param \Drupal\Core\State\StateInterface $state
    *   The state key value store.
    */
-  public function __construct(
-    ModuleHandlerInterface $module_handler,
-    StateInterface $state
-  ) {
+  public function __construct(StateInterface $state) {
     $this->state = $state;
   }
 
@@ -69,6 +64,25 @@ abstract class StateSettingsForm extends FormBase implements ContainerInjectionI
    */
   protected function setStateValues($values) {
     $this->state->set($this->stateKey, $values);
+  }
+
+  /**
+   * Returns a specific value from the state.
+   *
+   * @param string $key
+   *  The state value to return.
+   *
+   * @return mixed $value.
+   *  State value if set.
+   */
+  public function getStateValue(string $key) {
+    $values = $this->getStateValues();
+
+    if (!isset($values[$key])) {
+      return FALSE;
+    }
+
+    return $values[$key];
   }
 
   /**
