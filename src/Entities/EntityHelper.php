@@ -13,11 +13,53 @@ use Drupal\Core\Entity\FieldableEntityInterface;
 abstract class EntityHelper {
 
   /**
-   * @param \Drupal\Core\Entity\EntityInterface $entity
+   * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
    * @param $fieldName
+   *
+   * @return bool
    */
-  public static function getEntityFieldValues(EntityInterface $entity, $fieldName) {
+  public static function getEntityFieldValues(FieldableEntityInterface $entity, $fieldName) {
+    if (!$entity->hasField($fieldName)) {
+      return FALSE;
+    }
 
+    if (!$fieldValue = $entity->get($fieldName)) {
+      return FALSE;
+    }
+
+    if ($fieldValue->isEmpty()) {
+      return FALSE;
+    }
+
+    return $fieldValue->getValue();
+  }
+
+  /**
+   * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
+   * @param $fieldName
+   *
+   * @return array|bool
+   */
+  public static function getReferencedEntitiesByEntityFieldValues(FieldableEntityInterface $entity, $fieldName) {
+    if (!$entity->hasField($fieldName)) {
+      return FALSE;
+    }
+
+    if (!$fieldValue = $entity->get($fieldName)) {
+      return FALSE;
+    }
+
+    if ($fieldValue->isEmpty()) {
+      return FALSE;
+    }
+
+    $entities = [];
+
+    foreach ($fieldValue as $entityFieldValue) {
+      $entities[] = $entityFieldValue->entity;
+    }
+
+    return $entities;
   }
 
   /**
