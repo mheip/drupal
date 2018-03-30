@@ -122,15 +122,22 @@ abstract class MenuBlock extends BlockBase implements ContainerFactoryPluginInte
   protected function getTree() {
     $parameters = $this->getMenuTreeParameters();
     $tree = $this->menuLinkTree->load($this->menuName, $parameters);
+    $tree = $this->menuLinkTree->transform($tree, $this->getManipulators());
+    return $tree;
+  }
 
-    $manipulators = [
+  /**
+   * Returns a list of default manipulators.
+   *
+   * @return array $manipulators
+   *   An array of menu manipulators.
+   */
+  protected function getManipulators() {
+    return [
       ['callable' => 'menu.default_tree_manipulators:checkNodeAccess'],
       ['callable' => 'menu.default_tree_manipulators:checkAccess'],
       ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
     ];
-
-    $tree = $this->menuLinkTree->transform($tree, $manipulators);
-    return $tree;
   }
 
   /**
