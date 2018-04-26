@@ -1,14 +1,10 @@
 <?php
-/**
- * User: maarten.heip
- * Date: 16/03/2018
- * Time: 10:28
- */
 
 namespace Mheip\Drupal\Entities;
 
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\node\NodeInterface;
+use Drupal\node\Entity\Node;
+use Drupal\paragraphs\Entity\Paragraph;
 
 class ParagraphHelper extends EntityHelper {
 
