@@ -13,19 +13,33 @@ use Drupal\node\NodeInterface;
 class ParagraphHelper extends EntityHelper {
 
   /**
-   * @param \Drupal\Core\Entity\EntityInterface $paragraph
+   * @param \Drupal\paragraphs\Entity\Paragraph $paragraph
+   *
+   * @return bool|\Drupal\Core\Entity\ContentEntityInterface|\Drupal\Core\Entity\EntityInterface|\Mheip\Drupal\Entities\ParagraphHelper|null
+   */
+  public static function getNodeParent(Paragraph $paragraph) {
+    return self::getParentOfType($paragraph, Node::class);
+  }
+
+  /**
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   * @param string $type
    *
    * @return bool
    */
-  public static function getNodeParent(EntityInterface $paragraph) {
-    $parent = $paragraph->getParentEntity();
+  public static function getParentOfType(EntityInterface $entity, string $type) {
+    if (!$entity instanceof Paragraph) {
+      return FALSE;
+    }
 
-    if ($parent instanceof NodeInterface) {
+    $parent = $entity->getParentEntity();
+
+    if ($parent instanceof $type) {
       return $parent;
     }
 
     if ($parent instanceof EntityInterface) {
-      return self::getNodeParent($parent);
+      return self::getParentOfType($parent, $type);
     }
 
     return FALSE;
