@@ -9,6 +9,7 @@ namespace Mheip\Drupal\Entities;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
+use Drupal\Core\Entity\TranslatableRevisionableInterface;
 
 abstract class EntityHelper {
 
@@ -16,7 +17,7 @@ abstract class EntityHelper {
    * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
    * @param $fieldName
    *
-   * @return bool
+   * @return bool | array
    */
   public static function getEntityFieldValues(FieldableEntityInterface $entity, $fieldName) {
     if (!$values = self::getAllRawEntityFieldValues($entity, $fieldName)) {
@@ -40,7 +41,11 @@ abstract class EntityHelper {
     $entities = [];
 
     foreach ($values as $entityFieldValue) {
-      $entities[] = $entityFieldValue->entity;
+      if (!$referencedEntity = $entityFieldValue->entity) {
+        continue;
+      }
+
+      $entities[] = self::getTranslatedReferencedEntityByOriginalEntity($entity, $referencedEntity);
     }
 
     return $entities;
@@ -50,7 +55,7 @@ abstract class EntityHelper {
    * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
    * @param $fieldName
    *
-   * @return bool|\Drupal\Core\Entity\FieldableEntityInterface
+   * @return bool|\Drupal\Core\Entity\EntityInterface
    */
   public static function getReferencedEntityByField(FieldableEntityInterface $entity, $fieldName) {
     $firstValue = self::getFirstRawEntityFieldValue($entity, $fieldName);
@@ -59,11 +64,31 @@ abstract class EntityHelper {
       return FALSE;
     }
 
-    if (!$entity = $firstValue->entity) {
+    if (!$referencedEntity = $firstValue->entity) {
       return FALSE;
     }
 
-    return $entity;
+    return self::getTranslatedReferencedEntityByOriginalEntity($entity, $referencedEntity);
+  }
+
+  /**
+   * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
+   * @param \Drupal\Core\Entity\EntityInterface $referencedEntity
+   *
+   * @return $this|\Drupal\Core\Entity\EntityInterface
+   */
+  public static function getTranslatedReferencedEntityByOriginalEntity(FieldableEntityInterface $entity, EntityInterface $referencedEntity) : EntityInterface {
+    if ((!$referencedEntity instanceof TranslatableRevisionableInterface) || (!$entity instanceof TranslatableRevisionableInterface)) {
+      return $referencedEntity;
+    }
+
+    $entityLangcode = $entity->language()->getId();
+
+    if ($referencedEntity->hasTranslation($entityLangcode)) {
+      return $referencedEntity->getTranslation($entityLangcode);
+    }
+
+    return $referencedEntity;
   }
 
   /**
@@ -133,5 +158,4 @@ abstract class EntityHelper {
 
     return $fieldValue;
   }
-
 }
