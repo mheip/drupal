@@ -5,6 +5,7 @@ namespace Mheip\Drupal\State\Form;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageManager;
 use Drupal\Core\State\StateInterface;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 abstract class TranslatableStateSettingsForm extends StateSettingsForm {
@@ -83,6 +84,27 @@ abstract class TranslatableStateSettingsForm extends StateSettingsForm {
     }
 
     return $values[$this->langcode];
+  }
+
+  /**
+   * Returns a language switcher form element.
+   *
+   * @param array $form
+   *   The form.
+   */
+  protected function getLanguageSwitcher(array &$form) {
+    foreach ($this->languageManager->getLanguages() as $language) {
+      $links[] = [
+        '#title' => $this->t('Translate @language', ['@language' => $language->getName()]),
+        '#type' => 'link',
+        '#url' => Url::fromRoute('<current>', [], ['language' => $language]),
+      ];
+    }
+
+    $form['language_switcher'] = [
+      '#theme' => 'item_list',
+      '#items' => $links ?? [],
+    ];
   }
 
 }
